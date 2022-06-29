@@ -3660,7 +3660,7 @@ function setParallelOptions(){
     yield exec.exec(`echo ${process.env.PARALLEL_OPTIONS}`)
     yield exec.exec(`make genParallelList ${process.env.PARALLEL_OPTIONS}`)
 
-    yield exec.exec(`iconv -f iso8859-1 -t ibm-1047 TKG/parallelList.mk > TKG/parallelList.mk.ebcdic; rm TKG/parallelList.mk; mv TKG/parallelList.mk.ebcdic TKG/parallelList.mk`)
+    yield exec.exec(`iconv -f iso8859-1 -t ibm-1047 aqa-tests/TKG/parallelList.mk > aqa-tests/TKG/parallelList.mk.ebcdic; rm aqa-tests/TKG/parallelList.mk; mv aqa-tests/TKG/parallelList.mk.ebcdic aqa-tests/TKG/parallelList.mk`)
     process.chdir('aqa-tests')
   });
 }
