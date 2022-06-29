@@ -3653,7 +3653,7 @@ function setParallelOptions(){
     // hard coding to test if these work or not...
     console.log(__dirname)
     console.log(`Running new params`)
-    yield exec.exec(`PARALLEL_OPTIONS="TEST=extended TEST_TIME=180 NUM_MACHINES="`)
+    process.env.PARALLEL_OPTIONS = `PARALLEL_OPTIONS="TEST=extended TEST_TIME=180 NUM_MACHINES="`
     // print debug ftw :(
     console.log(`Echo new version??`)
     yield exec.exec(`echo $PARALLEL_OPTIONS`)
