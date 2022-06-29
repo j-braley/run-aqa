@@ -3651,15 +3651,17 @@ function setParallelOptions(){
   return __awaiter(this, void 0, void 0, function* () {
     //TODO: Make a func and parameterize the args here if the PARALLEL option was chosen
     // hard coding to test if these work or not...
+    process.chdir("TKG")
     console.log(__dirname)
     console.log(`Running new params`)
     process.env.PARALLEL_OPTIONS = `PARALLEL_OPTIONS="TEST=extended TEST_TIME=180 NUM_MACHINES="`
     // print debug ftw :(
     console.log(`Echo new version??`)
-    yield exec.exec(`echo $PARALLEL_OPTIONS`)
-    yield exec.exec(`make TKG/genParallelList $PARALLEL_OPTIONS`)
+    yield exec.exec(`echo ${process.env.PARALLEL_OPTIONS}`)
+    yield exec.exec(`make TKG/genParallelList ${process.env.PARALLEL_OPTIONS}`)
 
-    yield exec.exec(`iconv -f iso8859-1 -t ibm-1047 TKG/parallelList.mk > TKG/parallelList.mk.ebcdic; rm TKG/parallelList.mk; mv TKG/parallelList.mk.ebcdic TKG/parallelList.mk`)
+    yield exec.exec(`iconv -f iso8859-1 -t ibm-1047 parallelList.mk > parallelList.mk.ebcdic; rm parallelList.mk; mv parallelList.mk.ebcdic parallelList.mk`)
+    process.chdir('aqa-tests')
   });
 }
 function parseRepoBranch(repoBranch) {
