@@ -3658,7 +3658,7 @@ function setParallelOptions(){
     // print debug ftw :(
     console.log(`Echo new version??`)
     yield exec.exec(`echo ${process.env.PARALLEL_OPTIONS}`)
-    yield exec.exec(`make TKG/genParallelList ${process.env.PARALLEL_OPTIONS}`)
+    yield exec.exec(`make genParallelList ${process.env.PARALLEL_OPTIONS}`)
 
     yield exec.exec(`iconv -f iso8859-1 -t ibm-1047 parallelList.mk > parallelList.mk.ebcdic; rm parallelList.mk; mv parallelList.mk.ebcdic parallelList.mk`)
     process.chdir('aqa-tests')
