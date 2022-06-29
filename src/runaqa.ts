@@ -108,20 +108,20 @@ export async function runaqaTest(
     }
   }
   process.chdir('TKG')
+  
+  //TODO: Make a func and parameterize the args here if the PARALLEL option was chosen
+  // hard coding to test if these work or not...
+  console.log(__dirname)
+  console.log('Running new params')
+  await exec.exec('PARALLEL_OPTIONS="TEST=extended TEST_TIME=180 NUM_MACHINES="')
+  // print debug ftw :(
+  await exec.exec('Echo new version??')
+  await exec.exec('echo $PARALLEL_OPTIONS')
+  await exec.exec('make genParallelList $PARALLEL_OPTIONS')
+
+  await exec.exec('iconv -f iso8859-1 -t ibm-1047 parallelList.mk > parallelList.mk.ebcdic; rm parallelList.mk; mv parallelList.mk.ebcdic parallelList.mk')
+
   try {
-
-    //TODO: Make a func and parameterize the args here if the PARALLEL option was chosen
-    // hard coding to test if these work or not...
-    console.log(__dirname)
-    console.log('Running new params')
-    await exec.exec('PARALLEL_OPTIONS="TEST=extended TEST_TIME=180 NUM_MACHINES="')
-    // print debug ftw :(
-    await exec.exec('Echo new version??')
-    await exec.exec('echo $PARALLEL_OPTIONS')
-    await exec.exec('make genParallelList $PARALLEL_OPTIONS')
-
-    await exec.exec('iconv -f iso8859-1 -t ibm-1047 parallelList.mk > parallelList.mk.ebcdic; rm parallelList.mk; mv parallelList.mk.ebcdic parallelList.mk')
-
     await exec.exec('make compile')
 
     if (target.includes('custom') && customTarget !== '') {
