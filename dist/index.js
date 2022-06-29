@@ -3635,6 +3635,21 @@ function runGetSh(tkgRepo, openj9Repo, vendorTestParams, jdksource, customizedSd
         }
     });
 }
+function setParallelOptions(){
+
+  //TODO: Make a func and parameterize the args here if the PARALLEL option was chosen
+  // hard coding to test if these work or not...
+  console.log(__dirname)
+  console.log(`Running new params`)
+  yield exec.exec(`PARALLEL_OPTIONS="TEST=extended TEST_TIME=180 NUM_MACHINES="`)
+  // print debug ftw :(
+  console.log(`Echo new version??`)
+  yield exec.exec(`echo $PARALLEL_OPTIONS`)
+  yield exec.exec(`make TKG/genParallelList $PARALLEL_OPTIONS`)
+
+  yield exec.exec(`iconv -f iso8859-1 -t ibm-1047 TKG/parallelList.mk > TKG/parallelList.mk.ebcdic; rm TKG/parallelList.mk; mv TKG/parallelList.mk.ebcdic TKG/parallelList.mk`)
+
+}
 function parseRepoBranch(repoBranch) {
     const tempRepo = repoBranch.replace(/\s/g, '');
     var slashIndexCheck = tempRepo.indexOf( "/" );
