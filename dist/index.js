@@ -3422,6 +3422,7 @@ function runaqaTest(version, jdksource, customizedSdkUrl, sdkdir, buildList, tar
         }
         yield getAqaTestsRepo(aqatestsRepo);
         yield runGetSh(tkgRepo, openj9Repo, vendorTestParams, jdksource, customizedSdkUrl, sdkdir);
+        yield setParallelOptions();
         resetJDKHomeFromProperties();
         //Get Dependencies, using /*zip*/dependents.zip to avoid loop every available files
         let dependents = yield tc.downloadTool('https://ci.adoptopenjdk.net/view/all/job/test.getDependency/lastSuccessfulBuild/artifact//*zip*/dependents.zip');
