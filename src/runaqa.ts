@@ -283,8 +283,8 @@ async function getAqaTestsRepo(aqatestsRepo: string, version: string, buildList:
   if (IS_WINDOWS && buildList != '') {
     if (buildList === 'system'){
       process.chdir('system')
-      await exec.exec(`git clone -q https://github.com/adoptium/aqa-systemtest.git`)  // points to master
-      await exec.exec(`git clone -q https://github.com/adoptium/STF.git`) // points to master
+      await exec.exec(`git clone -q --branch v0.9.5 https://github.com/adoptium/aqa-systemtest.git`)  // points to verification branch
+      await exec.exec(`git clone -q --branch v0.9.5 https://github.com/adoptium/STF.git`) // points to verification
       process.chdir('../')
     }
     if (buildList === 'openjdk' && version != '') {
