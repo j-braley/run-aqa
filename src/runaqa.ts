@@ -272,6 +272,7 @@ function setSpec(): void {
  */
 async function getAqaTestsRepo(aqatestsRepo: string, version: string, buildList: string): Promise<void> {
   let repoBranch = ['adoptium/aqa-tests', 'master']
+  let jdkVersion = ""
   if (aqatestsRepo.length !== 0) {
     repoBranch = parseRepoBranch(aqatestsRepo)
   }
@@ -283,14 +284,20 @@ async function getAqaTestsRepo(aqatestsRepo: string, version: string, buildList:
   if (IS_WINDOWS && buildList != '') {
     if (buildList === 'system'){
       process.chdir('system')
-      await exec.exec(`git clone -q https://github.com/adoptium/aqa-systemtest.git`)  // points to master
-      await exec.exec(`git clone -q https://github.com/adoptium/STF.git`) // points to master
+      await exec.exec(`git clone -q -b v0.9.6 https://github.com/adoptium/aqa-systemtest.git`)  // points to master
+      await exec.exec(`git clone -q -b v0.9.6 https://github.com/adoptium/STF.git`) // points to master
       process.chdir('../')
     }
     if (buildList === 'openjdk' && version != '') {
       process.chdir('openjdk')
+      if (version === "17u") {
+        jdkVersion = "jdk-17.0.6+10"
+      }
+      else {
+        jdkVersion = "jdk-11.0.18+10"
+      }
       // Shallow clone the adoptium JDK version - quietly - if there is a reference repo obtain objects from there - destination is openjdk-jdk
-      await exec.exec(`git clone --depth 1 -q --reference-if-able ${process.env.GITHUB_WORKSPACE}/openjdk_cache https://github.com/adoptium/jdk${version}.git openjdk-jdk`)
+      await exec.exec(`git clone -b ${jdkVersion} --depth 1 -q --reference-if-able ${process.env.GITHUB_WORKSPACE}/openjdk_cache https://github.com/adoptium/jdk${version}.git openjdk-jdk`)
       process.chdir('../')
     }
   }
