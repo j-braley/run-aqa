@@ -44,6 +44,7 @@ export async function runaqaTest(
   version: string,
   jdksource: string,
   customizedSdkUrl: string,
+  customizedSdkUrlMasked: string,
   sdkdir: string,
   buildList: string,
   target: string,
@@ -59,6 +60,7 @@ export async function runaqaTest(
     version,
     jdksource,
     customizedSdkUrl,
+    customizedSdkUrlMasked,
     sdkdir,
     buildList,
     target,
@@ -330,6 +332,7 @@ async function runGetSh(
   vendorTestParams: string,
   jdksource: string,
   customizedSdkUrl: string,
+  customizedSdkUrlMasked: string,
   sdkdir: string
 ): Promise<void> {
   let parameters = ''
@@ -346,6 +349,9 @@ async function runGetSh(
   }
   if (customizedSdkUrl.length !== 0) {
     parameters += ` --customizedURL ${customizedSdkUrl}`
+  }
+  if (customizedSdkUrlMasked.length !== 0) {
+    parameters += ` --customizedURL ${customizedSdkUrlMasked}`
   }
   if (sdkdir.length !== 0) {
     parameters += ` --sdkdir ${sdkdir}`
@@ -376,6 +382,7 @@ export async function setupParallelEnv(
   version: string,
   jdksource: string,
   customizedSdkUrl: string,
+  customizedSdkUrlMasked: string,
   sdkdir: string,
   buildList: string,
   target: string,
@@ -387,7 +394,7 @@ export async function setupParallelEnv(
   numMachines: string
 ): Promise<void> {
 
-  await setupTestEnv(version, jdksource, customizedSdkUrl, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo);
+  await setupTestEnv(version, jdksource, customizedSdkUrl, customizedSdkUrlMasked, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo);
   process.chdir('TKG');
   process.env.PARALLEL_OPTIONS = `PARALLEL_OPTIONS=TEST=${target} TEST_TIME= NUM_MACHINES=${numMachines}`;
   await exec.exec(`make genParallelList ${process.env.PARALLEL_OPTIONS}`);
@@ -434,6 +441,7 @@ async function setupTestEnv(
   version: string,
   jdksource: string,
   customizedSdkUrl: string,
+  customizedSdkUrlMasked: string,
   sdkdir: string,
   buildList: string,
   target: string,
@@ -446,7 +454,7 @@ async function setupTestEnv(
     await installPlatformDependencies();
     setupEnvVariables(version, jdksource, buildList, sdkdir);
     await getAqaTestsRepo(aqatestsRepo, version, buildList);
-    await runGetSh(tkgRepo, openj9Repo, vendorTestParams, jdksource, customizedSdkUrl, sdkdir);
+    await runGetSh(tkgRepo, openj9Repo, vendorTestParams, jdksource, customizedSdkUrl, customizedSdkUrlMasked, sdkdir);
     resetJDKHomeFromProperties();
 
     // parallelList must be in TKG

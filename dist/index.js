@@ -48,6 +48,10 @@ function run() {
             const customizedSdkUrl = core.getInput('customizedSdkUrl', {
                 required: false
             });
+            const customizedSdkUrlMasked = core.getInput('customizedSdkUrlMasked', {
+                required: false
+            });
+            core.setSecret(customizedSdkUrlMasked);
             let sdkdir = core.getInput('sdkdir', { required: false });
             const version = core.getInput('version', { required: false });
             const buildList = core.getInput('build_list', { required: false });
@@ -103,10 +107,10 @@ function run() {
                 sdkdir = process.cwd();
             }
             if (runParallel === 'true' && numMachines != '1') {
-                yield runaqa.setupParallelEnv(version, jdksource, customizedSdkUrl, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo, numMachines);
+                yield runaqa.setupParallelEnv(version, jdksource, customizedSdkUrl, customizedSdkUrlMasked, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo, numMachines);
             }
             else {
-                yield runaqa.runaqaTest(version, jdksource, customizedSdkUrl, sdkdir, buildList, target, customTarget, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo);
+                yield runaqa.runaqaTest(version, jdksource, customizedSdkUrl, customizedSdkUrlMasked, sdkdir, buildList, target, customTarget, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo);
             }
         }
         catch (error) {
@@ -202,9 +206,9 @@ if (!tempDirectory) {
  * @param  {[string]} aqasystemtestsRepo Alternative AQA-systemtestRepo
  * @return {[null]}  null
  */
-function runaqaTest(version, jdksource, customizedSdkUrl, sdkdir, buildList, target, customTarget, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo) {
+function runaqaTest(version, jdksource, customizedSdkUrl, customizedSdkUrlMasked, sdkdir, buildList, target, customTarget, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield setupTestEnv(version, jdksource, customizedSdkUrl, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo);
+        yield setupTestEnv(version, jdksource, customizedSdkUrl, customizedSdkUrlMasked, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo);
         const options = {};
         let myOutput = '';
         options.listeners = {
@@ -444,7 +448,7 @@ function getAqaSystemTestsRepo(aqasystemtestsRepo) {
  * @param  {[string]} vendorTestParams Vendor supplied test parameters
  * @return {[null]}  null
  */
-function runGetSh(tkgRepo, openj9Repo, vendorTestParams, jdksource, customizedSdkUrl, sdkdir) {
+function runGetSh(tkgRepo, openj9Repo, vendorTestParams, jdksource, customizedSdkUrl, customizedSdkUrlMasked, sdkdir) {
     return __awaiter(this, void 0, void 0, function* () {
         let parameters = '';
         if (tkgRepo.length !== 0) {
@@ -460,6 +464,9 @@ function runGetSh(tkgRepo, openj9Repo, vendorTestParams, jdksource, customizedSd
         }
         if (customizedSdkUrl.length !== 0) {
             parameters += ` --customizedURL ${customizedSdkUrl}`;
+        }
+        if (customizedSdkUrlMasked.length !== 0) {
+            parameters += ` --customizedURL ${customizedSdkUrlMasked}`;
         }
         if (sdkdir.length !== 0) {
             parameters += ` --sdkdir ${sdkdir}`;
@@ -487,9 +494,9 @@ function runGetSh(tkgRepo, openj9Repo, vendorTestParams, jdksource, customizedSd
  * @param  {[string]} aqasystemtestsRepo Alternative AQA-systemtestRepo
  * @return {[null]}  null
  */
-function setupParallelEnv(version, jdksource, customizedSdkUrl, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo, numMachines) {
+function setupParallelEnv(version, jdksource, customizedSdkUrl, customizedSdkUrlMasked, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo, numMachines) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield setupTestEnv(version, jdksource, customizedSdkUrl, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo);
+        yield setupTestEnv(version, jdksource, customizedSdkUrl, customizedSdkUrlMasked, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo);
         process.chdir('TKG');
         process.env.PARALLEL_OPTIONS = `PARALLEL_OPTIONS=TEST=${target} TEST_TIME= NUM_MACHINES=${numMachines}`;
         yield exec.exec(`make genParallelList ${process.env.PARALLEL_OPTIONS}`);
@@ -531,12 +538,12 @@ function setupEnvVariables(version, jdksource, buildList, sdkdir) {
  * @param  {[string]} aqasystemtestsRepo Alternative AQA-systemtestRepo
  * @return {null}  null
  */
-function setupTestEnv(version, jdksource, customizedSdkUrl, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo) {
+function setupTestEnv(version, jdksource, customizedSdkUrl, customizedSdkUrlMasked, sdkdir, buildList, target, aqatestsRepo, openj9Repo, tkgRepo, vendorTestParams, aqasystemtestsRepo) {
     return __awaiter(this, void 0, void 0, function* () {
         yield installPlatformDependencies();
         setupEnvVariables(version, jdksource, buildList, sdkdir);
         yield getAqaTestsRepo(aqatestsRepo, version, buildList);
-        yield runGetSh(tkgRepo, openj9Repo, vendorTestParams, jdksource, customizedSdkUrl, sdkdir);
+        yield runGetSh(tkgRepo, openj9Repo, vendorTestParams, jdksource, customizedSdkUrl, customizedSdkUrlMasked, sdkdir);
         resetJDKHomeFromProperties();
         // parallelList must be in TKG
         if (target.includes('-f parallelList.mk')) {

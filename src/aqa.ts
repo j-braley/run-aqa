@@ -7,6 +7,12 @@ async function run(): Promise<void> {
     const customizedSdkUrl = core.getInput('customizedSdkUrl', {
       required: false
     })
+
+    const customizedSdkUrlMasked = core.getInput('customizedSdkUrlMasked', {
+      required: false
+    })
+    core.setSecret(customizedSdkUrlMasked);
+
     let sdkdir = core.getInput('sdkdir', {required: false})
     const version = core.getInput('version', {required: false})
     const buildList = core.getInput('build_list', {required: false})
@@ -80,6 +86,7 @@ async function run(): Promise<void> {
         version,
         jdksource,
         customizedSdkUrl,
+        customizedSdkUrlMasked,
         sdkdir,
         buildList,
         target,
@@ -96,6 +103,7 @@ async function run(): Promise<void> {
         version,
         jdksource,
         customizedSdkUrl,
+        customizedSdkUrlMasked,
         sdkdir,
         buildList,
         target,

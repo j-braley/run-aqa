@@ -9,7 +9,10 @@ inputs:
     description: 'upstream, github-hosted, install-jdk, nightly, customized'
     default: 'upstream'
   customizedSdkUrl:
-    description: 'if jdksource is nightly or customized, this is the url for customized sdk'
+    description: 'if jdksource is nightly or customized, this is the unmasked url for customized sdk'
+    required: false
+  customizedSdkUrlMasked:
+    description: 'if jdksource is nightly or customized, this is the masked url for customized sdk'
     required: false
   sdkdir:
     description: 'if jdksource is nightly or customized, please provide preferred directory to store sdk'
